@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Level 4 - Gallery Puzzle</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <div class="phone">
+      <!-- Phone notch / status bar -->
+      <div class="camera-notch"><div class="dot"></div></div>
+      <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="status-icons">
+          <div class="icon">📶</div>
+          <div class="icon">📡</div>
+          <div class="icon">🔋</div>
+        </div>
+      </div>
+
+      <!-- Home screen (shows app icons) -->
+      <div id="home-screen" class="screen home-screen">
+        <div class="home-grid">
+          <!-- Row 1 -->
+          <div class="app-icon featured" id="gallery-icon">
+            <div class="icon-img">🖼️</div>
+            <div class="icon-label">Gallery</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">📷</div>
+            <div class="icon-label">Camera</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">💬</div>
+            <div class="icon-label">Messages</div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="app-icon">
+            <div class="icon-img">🎵</div>
+            <div class="icon-label">Music</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">📝</div>
+            <div class="icon-label">Notes</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">📅</div>
+            <div class="icon-label">Calendar</div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="app-icon">
+            <div class="icon-img">📁</div>
+            <div class="icon-label">Files</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">⏰</div>
+            <div class="icon-label">Clock</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">⛅</div>
+            <div class="icon-label">Weather</div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="app-icon">
+            <div class="icon-img">➗</div>
+            <div class="icon-label">Calculator</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">👥</div>
+            <div class="icon-label">Contacts</div>
+          </div>
+          <div class="app-icon">
+            <div class="icon-img">🔔</div>
+            <div class="icon-label">Alerts</div>
+          </div>
+        </div>
+
+        <div class="home-dock" aria-label="App dock">
+          <div class="dock-app">
+            <div class="icon-img">📞</div>
+          </div>
+          <div class="dock-app">
+            <div class="icon-img">💬</div>
+          </div>
+          <div class="dock-app featured">
+            <div class="icon-img">🖼️</div>
+          </div>
+          <div class="dock-app">
+            <div class="icon-img">🎵</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gallery screen (hidden initially) -->
+      <div id="gallery-screen" class="screen gallery-screen hidden">
+        <header class="gallery-header">
+          <button id="back-btn" class="back-btn">←</button>
+          <h1>Gallery</h1>
+          <div class="spacer"></div>
+        </header>
+
+        <div class="gallery-content">
+          <div class="controls">
+            <div id="progress">Differences Found: 0 / 5</div>
+            <div class="buttons">
+              <button id="hint-btn" class="btn">Hint</button>
+              <button id="playagain-btn" class="btn hidden">Play Again</button>
+            </div>
+          </div>
+
+          <div class="photos">
+            <div class="photo-wrap" id="left-photo">
+              <img src="images/img1.jpg" alt="Left" class="photo">
+              <div class="overlay"></div>
+              <div class="markers"></div>
+            </div>
+            <div class="photo-wrap" id="right-photo">
+              <img src="images/img2.jpg" alt="Right" class="photo">
+              <div class="overlay"></div>
+              <div class="markers"></div>
+            </div>
+          </div>
+
+          <div id="message" class="message"></div>
+        </div>
+      </div>
+
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
