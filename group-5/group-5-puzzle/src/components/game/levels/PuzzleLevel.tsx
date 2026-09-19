@@ -44,6 +44,9 @@ export function PuzzleLevel({
   onSolved: () => void;
 }) {
   const game = useGame();
+console.log("game keys:", Object.keys(game));
+
+const letter = game.scrambled[config.level - 1] ?? "";
   const ids = useMemo(
     () => Array.from({ length: config.cols * config.rows }, (_, i) => i),
     [config.cols, config.rows],
@@ -189,7 +192,7 @@ if (ids !== prevIds) { setPrevIds(ids); setShuffled(shuffleArray(ids)); }
           <div className="border border-primary bg-card px-12 py-10 text-center shadow-glow animate-scale-in">
             <p className="eyebrow">Puzzle solved · Letter unlocked</p>
             <div className="my-4 font-display text-8xl text-primary">
-              {config.letter}
+              {letter}
             </div>
             <p className="text-sm text-muted-foreground">
               Evidence added to your case file

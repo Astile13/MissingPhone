@@ -10,6 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { pickWord, shuffleLetters } from "@/lib/words";
 
 export type Screen =
   | "loading"
@@ -30,6 +31,8 @@ type GameState = {
   setName: (name: string) => void;
   level: number;
   unlocked: string[];
+  word: string;
+  scrambled: string[];
   elapsed: number;
   running: boolean;
   muted: boolean;
@@ -45,7 +48,6 @@ type GameState = {
 };
 
 const GameContext = createContext<GameState | null>(null);
-const LETTERS = ["S", "U", "Q", "T", "E"];
 const SAMPLE_SCORES: Score[] = [
   { name: "A. MORROW", time: 196, date: "09.18.26" },
   { name: "NIGHTJAR", time: 243, date: "09.17.26" },
@@ -58,6 +60,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const [name, setName] = useState("");
   const [level, setLevel] = useState(1);
   const [unlocked, setUnlocked] = useState<string[]>([]);
+  const [puzzle, setPuzzle] = useState<{ word: string; scrambled: string[] }>({
+    word: "",
+    scrambled: [],
+  });
   const [elapsed, setElapsed] = useState(0);
   const [running, setRunning] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -66,13 +72,13 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const bgMusic = useRef<HTMLAudioElement | null>(null);
 
   const [scores, setScores] = useState<Score[]>(() => {
-  if (typeof window === "undefined") return SAMPLE_SCORES;
-  try {
-    const stored = window.localStorage.getItem("secret5-scores");
-    if (stored) return [...SAMPLE_SCORES, ...(JSON.parse(stored) as Score[])];
-  } catch { /* ignore invalid local data */ }
-  return SAMPLE_SCORES;
-});
+    if (typeof window === "undefined") return SAMPLE_SCORES;
+    try {
+      const stored = window.localStorage.getItem("secret5-scores");
+      if (stored) return [...SAMPLE_SCORES, ...(JSON.parse(stored) as Score[])];
+    } catch { /* ignore invalid local data */ }
+    return SAMPLE_SCORES;
+  });
 
   useEffect(() => {
     const track = new Audio("/audio/audio.mp3");
@@ -111,7 +117,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
     );
     return () => window.clearInterval(id);
   }, [running]);
-  
 
   const playSound = useCallback(
     (type: "click" | "snap" | "error" | "success") => {
@@ -144,6 +149,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [muted],
   );
   const startGame = useCallback(() => {
+    const word = pickWord(puzzle.word);
+    setPuzzle({ word, scrambled: shuffleLetters(word.split(""), word) });
     setLevel(1);
     setUnlocked([]);
     setElapsed(0);
@@ -151,15 +158,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setRunning(true);
     setScreen("game");
     playSound("click");
-  }, [playSound]);
+  }, [playSound, puzzle.word]);
   const finishLevel = useCallback(() => {
-    setUnlocked((current) =>
-      current.includes(LETTERS[level - 1] ?? "")
-        ? current
-        : [...current, LETTERS[level - 1] ?? ""],
-    );
+    const letter = puzzle.scrambled[level - 1];
+    if (letter) {
+      // Guard on length, not on the letter itself, because words like ALIBI repeat letters.
+      setUnlocked((current) =>
+        current.length >= level ? current : [...current, letter],
+      );
+    }
     playSound("success");
-  }, [level, playSound]);
+  }, [level, puzzle.scrambled, playSound]);
   const advanceLevel = useCallback(() => {
     if (level < 5) setLevel((current) => current + 1);
     else setScreen("final");
@@ -208,6 +217,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setName,
       level,
       unlocked,
+      word: puzzle.word,
+      scrambled: puzzle.scrambled,
       elapsed,
       running,
       muted,
@@ -226,6 +237,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       name,
       level,
       unlocked,
+      puzzle,
       elapsed,
       running,
       muted,
