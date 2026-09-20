@@ -1,0 +1,31 @@
+{
+  "name": "wanderlock",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "vite --config client/vite.config.js",
+    "dev:server": "node --env-file-if-exists=.env --watch server/index.js",
+    "build": "vite build --config client/vite.config.js",
+    "start": "node --env-file-if-exists=.env server/index.js",
+    "db:migrate": "node --env-file-if-exists=.env database/migrate.js",
+    "db:seed": "node server/data/validate.js",
+    "test": "node --test tests/unit.test.js",
+    "test:integration": "node --env-file-if-exists=.env --test tests/integration.test.js",
+    "test:e2e": "node --env-file-if-exists=.env node_modules/@playwright/test/cli.js test",
+    "check": "npm run db:seed && npm test && npm run build",
+    "test:api": "node --test tests/api-smoke.test.js"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "express-rate-limit": "8.7.0",
+    "pg": "8.23.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "vite": "8.3.0"
+  }
+}

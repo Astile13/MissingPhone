@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5efdf" />
+    <meta
+      name="description"
+      content="Five destinations. One lost phone. A little journey worth finishing."
+    />
+    <title>Wanderlock · A journey back to you</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/compass.svg" />
+  </head>
+  <body>
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="Wanderlock home"
+        ><img
+          src="/assets/compass.svg"
+          alt=""
+          width="32"
+          height="32"
+        />wanderlock<span class="brand-dot">.</span></a
+      ><button id="sound-toggle" class="quiet sound-toggle" aria-label="Toggle sound">🔊</button
+      ><button id="help" class="quiet">
+        How to play <span aria-hidden="true">↗</span>
+      </button>
+    </header>
+    <main id="app" tabindex="-1"></main>
+    <p
+      id="status"
+      class="status"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></p>
+    <footer class="footer">
+      <span>A little curiosity goes a long way.</span
+      ><span>5 destinations · One good deed</span>
+    </footer>
+    <dialog id="instructions" aria-labelledby="help-title">
+      <div class="dialog-inner">
+        <span class="eyebrow">FIELD GUIDE</span>
+        <h2 id="help-title">A good deed.<br />A little adventure.</h2>
+        <p>
+          You found a lost phone. Unscramble five destinations to lift the map
+          and meet its fictional owner.
+        </p>
+        <ol>
+          <li>
+            Read the free clue and word length. Type a destination and press
+            Enter or Check answer.
+          </li>
+          <li>
+            Every solved destination removes one map piece. There are exactly
+            five.
+          </li>
+          <li>
+            Each level starts at 100 points: −10 per full-length wrong guess and
+            −20 per paid letter hint. Each level has a zero-point floor.
+          </li>
+          <li>
+            You have three paid hints for the entire journey. Each reveals the
+            next letter in position. Shuffle is free.
+          </li>
+          <li>
+            After three wrong guesses, an extra clue appears for free. Empty or
+            incomplete answers cost nothing.
+          </li>
+        </ol>
+        <p>
+          No timer. Unlimited attempts. Up to 500 points. Your progress saves
+          automatically; use Resume on this browser.
+        </p>
+        <button id="close-help" class="primary">Got it, let’s explore →</button>
+        <p class="fine">
+          A fictional phone-unlocking story, not a real unlocking tool.
+        </p>
+      </div>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

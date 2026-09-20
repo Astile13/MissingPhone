@@ -1,0 +1,7 @@
+[
+  {"id":"paris","answer":"PARIS","difficulty":"easy","clue":"City of Light","extraClue":"The Eiffel Tower stands in this capital of France."},
+  {"id":"jaipur","answer":"JAIPUR","difficulty":"medium","clue":"India’s Pink City, home to the Palace of Winds","extraClue":"This capital of Rajasthan is famous for Hawa Mahal."},
+  {"id":"london","answer":"LONDON","difficulty":"medium","clue":"Big Ben and red double-decker buses","extraClue":"The River Thames flows through this capital of the United Kingdom."},
+  {"id":"barcelona","answer":"BARCELONA","difficulty":"hard","clue":"Gaudí’s colourful city on Spain’s Mediterranean coast","extraClue":"The Sagrada Família is here; its football club is nicknamed Barça."},
+  {"id":"santorini","answer":"SANTORINI","difficulty":"hard","clue":"Blue domes and white villages above a Greek volcanic bay","extraClue":"This Greek island is famous for sunsets in Oia; its name begins with S."}
+]
