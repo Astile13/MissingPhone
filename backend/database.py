@@ -1,12 +1,15 @@
-import sqlite3
+import os
+from pymongo import MongoClient
+from dotenv import load_dotenv
 
+load_dotenv()
 
-DATABASE = "game.db"
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
+client = MongoClient(MONGO_URI)
+
+db = client["missing_phone"]
 
 def get_db_connection():
-    connection = sqlite3.connect(DATABASE)
-
-    connection.row_factory = sqlite3.Row
-
-    return connection
+    return db

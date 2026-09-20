@@ -1,44 +1,69 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
-import sqlite3
 
 from database import get_db_connection
 
-
 app = Flask(__name__)
-
 CORS(app)
 
+db = get_db_connection()
+scores_collection = db["scores"]
 
-def initialize_database():
-
-    connection = get_db_connection()
-
-    connection.execute("""
-        CREATE TABLE IF NOT EXISTS scores (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            score INTEGER NOT NULL,
-            completion_time INTEGER NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    connection.commit()
-
-    connection.close()
-
-
+# Your routes
 @app.route("/")
 def home():
-
     return jsonify({
         "message": "Spot the Difference Backend is running!"
     })
 
 
+
+
+@app.route("/api/leaderboard", methods=["GET"])
+def get_leaderboard():
+    # your existing leaderboard code
+    pass
+
+
+@app.route("/api/scores", methods=["POST"])
+def save_score():
+
+    try:
+        data = request.get_json()
+
+        username = data.get("username")
+        score = data.get("score")
+        completion_time = data.get("completion_time")
+
+        if not username or score is None or completion_time is None:
+            return jsonify({
+                "success": False,
+                "message": "Username, score and completion time are required."
+            }), 400
+
+        score_data = {
+            "username": username,
+            "score": score,
+            "completion_time": completion_time
+        }
+
+        result = scores_collection.insert_one(score_data)
+
+        return jsonify({
+            "success": True,
+            "message": "Score saved successfully.",
+            "scoreId": str(result.inserted_id)
+        }), 201
+
+    except Exception as error:
+
+        return jsonify({
+            "success": False,
+            "message": str(error)
+        }), 500
+
+
+# Start server LAST
 if __name__ == "__main__":
-
-    initialize_database()
-
     app.run(debug=True, port=5000)
+   
