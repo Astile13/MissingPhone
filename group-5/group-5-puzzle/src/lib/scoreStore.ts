@@ -4,7 +4,7 @@ import Score from "@/models/Score";
 
 export type PublicScore = { name: string; time: number; date: string };
 export type FinishResult =
-  | { ok: true; score: PublicScore }
+  | { ok: true; score: PublicScore & { attempt: number; improved: boolean } }
   | { ok: false; status: number; error: string };
 
 const MIN_SECONDS = 10;   // faster than this is rejected
@@ -16,9 +16,28 @@ function fmt(d: Date) {
   return `${p(d.getUTCMonth() + 1)}.${p(d.getUTCDate())}.${p(d.getUTCFullYear() % 100)}`;
 }
 
-export async function createPlayer(name: string): Promise<string> {
+// One record per email. Entering the same email again returns the existing
+// record, so replays never create a second row. The name from the first
+// registration is kept.
+export async function createPlayer(name: string, email: string): Promise<string> {
   await connectDB();
-  const doc = await Score.create({ name });
+  const key = email.trim().toLowerCase();
+  const run = () =>
+    Score.findOneAndUpdate(
+      { email: key },
+      { $setOnInsert: { name } },
+      { upsert: true, new: true }
+    );
+
+  let doc = null;
+  try {
+    doc = await run();
+  } catch (e) {
+    // two requests created the same email at once: the second one just reads it
+    if ((e as { code?: number }).code === 11000) doc = await run();
+    else throw e;
+  }
+  if (!doc) throw new Error("Could not create player");
   return String(doc._id);
 }
 
@@ -28,28 +47,50 @@ export async function finishPlayer(id: string, startedAt: number): Promise<Finis
 
   const doc = await Score.findById(id);
   if (!doc) return { ok: false, status: 404, error: "Player not found" };
-  if (doc.time != null) return { ok: false, status: 409, error: "Already submitted" };
 
   const now = Date.now();
   if (startedAt > now + 2000) return { ok: false, status: 400, error: "Invalid start time" };
 
-  // The game starts after the name is entered, so the real time can never
-  // exceed the time since this record was created. Cap the time at that.
-  const cap = Math.ceil((now - doc.createdAt.getTime()) / 1000);
+  // A game starts after the name was entered or after the previous attempt ended,
+  // so its time can't exceed the time since then. This cap also blocks
+  // submitting the same attempt twice (the second submit would be under 10 s).
+  const since = (doc.lastFinishedAt ?? doc.createdAt).getTime();
+  const cap = Math.ceil((now - since) / 1000);
   const time = Math.min(Math.round((now - startedAt) / 1000), cap);
   if (time < MIN_SECONDS || time > MAX_SECONDS) {
     return { ok: false, status: 400, error: "Invalid time" };
   }
 
-  // Only update if it hasn't been finished already (guards against double submit)
-  const res = await Score.updateOne({ _id: doc._id, time: { $exists: false } }, { $set: { time } });
+  // Keep the best (lowest) time only
+  const improved = doc.time == null || time < doc.time;
+  const res = await Score.updateOne(
+    { _id: doc._id, lastFinishedAt: doc.lastFinishedAt ?? null },
+    {
+      $set: {
+        lastFinishedAt: new Date(now),
+        ...(improved ? { time, bestAt: new Date(now) } : {}),
+      },
+    }
+  );
   if (res.modifiedCount === 0) return { ok: false, status: 409, error: "Already submitted" };
 
-  return { ok: true, score: { name: doc.name, time, date: fmt(doc.createdAt) } };
+  const best = improved ? time : (doc.time as number);
+  const bestDate = improved ? new Date(now) : (doc.bestAt ?? doc.createdAt);
+  return {
+    ok: true,
+    score: { name: doc.name, time: best, date: fmt(bestDate), attempt: time, improved },
+  };
 }
 
 export async function topScores(limit = 20): Promise<PublicScore[]> {
   await connectDB();
-  const rows = await Score.find({ time: { $exists: true } }).sort({ time: 1 }).limit(limit).lean();
-  return rows.map((r) => ({ name: r.name, time: r.time as number, date: fmt(r.createdAt) }));
+  const rows = await Score.find({ time: { $exists: true } }, "name time bestAt createdAt")
+    .sort({ time: 1, bestAt: 1 })
+    .limit(limit)
+    .lean();
+  return rows.map((r) => ({
+    name: r.name,
+    time: r.time as number,
+    date: fmt(r.bestAt ?? r.createdAt),
+  }));
 }

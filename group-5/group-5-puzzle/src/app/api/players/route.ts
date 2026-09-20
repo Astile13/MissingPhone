@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
   try {
-    const id = await createPlayer(parsed.data.name);
+    const id = await createPlayer(parsed.data.name, parsed.data.email);
     return NextResponse.json({ id }, { status: 201 });
   } catch (e) {
     console.error(e);
