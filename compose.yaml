@@ -1,0 +1,19 @@
+# Optional local-only PostgreSQL; use YOUR_PASSWORD only for local development.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: wanderlock
+      POSTGRES_PASSWORD: local_dev_only
+      POSTGRES_DB: wanderlock
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - wanderlock_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wanderlock"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  wanderlock_data:
