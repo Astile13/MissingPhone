@@ -1,0 +1,41 @@
+name: Team task
+description: One small, reviewable Wanderlock task
+title: "[M1/M2/M3/M4/M5] "
+body:
+  - type: input
+    id: owner
+    attributes:
+      label: Owner
+      description: Member number and actual GitHub username; also assign the Issue in GitHub.
+      placeholder: Member 2 — @username
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Task
+      description: What will change, why, and which files are owned?
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Completion criteria
+      description: Observable behaviour and checks required for completion.
+      value: "- [ ] Implementation complete\n- [ ] Tests or manual checks recorded\n- [ ] Author can explain the code\n- [ ] Peer review approved"
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      placeholder: "Depends on #12 API contract; otherwise None."
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Target date
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true

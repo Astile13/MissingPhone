@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible problem
+title: "[Bug] "
+body:
+  - type: input
+    id: owner
+    attributes:
+      label: Owner
+      placeholder: Member number and @username, or Unassigned
+    validations:
+      required: true
+  - type: textarea
+    id: task
+    attributes:
+      label: Task and reproduction steps
+      description: Include device/browser, actual result and expected result. Never paste session tokens.
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Completion criteria
+      placeholder: Regression check, expected behaviour and reviewer.
+    validations:
+      required: true
+  - type: input
+    id: dependencies
+    attributes:
+      label: Dependencies
+      placeholder: Related Issue numbers or None
+  - type: input
+    id: date
+    attributes:
+      label: Target date
+      placeholder: YYYY-MM-DD
